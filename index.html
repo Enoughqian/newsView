@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TITLE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 90%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: left;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin: 10px 0;
+        }
+
+        p {
+            font-size: 1em;
+            line-height: 1.5;
+            margin: 10px 0;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5em;
+            }
+
+            p {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TITLE</h1>
+        <img alt="新闻图片">
+        <p>本文内容均直接采集自主要境外媒体，原文链接见文章底部</p>
+        <div id="content-container"></div>
+        <p><a href="#">点击此处查看原文</a></p>
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+
+        if (id) {
+            fetch(`/api?id=${id}`)
+              .then(response => response.json())
+              .then(data => {
+                    document.querySelector('title').textContent = data.title;
+                    document.querySelector('h1').textContent = data.title;
+                    const img = document.querySelector('img');
+                    if (data.pic_set) {
+                        img.src = data.pic_set;
+                    } else {
+                        img.remove();
+                    }
+                    const contentContainer = document.getElementById('content-container');
+                    contentContainer.innerHTML = '';
+                    const paragraphs = data.content.split('\n');
+                    if (paragraphs.length === 1 && paragraphs[0] === '') {
+                        const p = document.createElement('p');
+                        p.textContent = '没有这条信息';
+                        contentContainer.appendChild(p);
+                    } else {
+                        paragraphs.forEach(paragraph => {
+                            const p = document.createElement('p');
+                            p.textContent = paragraph;
+                            contentContainer.appendChild(p);
+                        });
+                    }
+                    document.querySelector('.container p:nth-child(4) a').href = data.href;
+                })
+              .catch(error => console.error('Error fetching data:', error));
+        }
+    </script>
+</body>
+</html>
+    

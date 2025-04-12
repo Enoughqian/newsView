@@ -63,7 +63,7 @@
         <img alt="新闻图片">
         <p>本文内容均直接采集自主要境外媒体，原文链接见文章底部</p>
         <div id="content-container"></div>
-        <p><a href="#">点击此处查看原文</a></p>
+        <p><a id="origin-link" href="#">点击此处查看原文</a></p>
     </div>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
@@ -95,7 +95,7 @@
                             contentContainer.appendChild(p);
                         });
                     }
-                    document.querySelector('.container p:nth-child(4) a').href = data.href;
+                    document.getElementById('origin-link').href = data.href;
                 })
               .catch(error => console.error('Error fetching data:', error));
         }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,6 +45,7 @@
             height: auto;
             border-radius: 4px;
             margin: 10px 0;
+            display: none; /* 初始隐藏图片 */
         }
 
         @media (max-width: 600px) {
@@ -57,6 +59,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>TITLE</h1>
@@ -76,8 +79,14 @@
                     document.querySelector('title').textContent = data.title;
                     document.querySelector('h1').textContent = data.title;
                     const img = document.querySelector('img');
-                    if (data.pic_set) {
-                        img.src = data.pic_set;
+                    if (data.save_path_output) {
+                        img.onload = () => {
+                            img.style.display = 'block'; // 图片加载完成后显示
+                        };
+                        img.onerror = () => {
+                            console.error('图片加载失败:', data.save_path_output);
+                        };
+                        img.src = data.save_path_output;
                     } else {
                         img.remove();
                     }
@@ -101,5 +110,5 @@
         }
     </script>
 </body>
+
 </html>
-    

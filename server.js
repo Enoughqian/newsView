@@ -19,23 +19,29 @@ function createFolderIfNotExists(folderPath) {
 }
 
 function downloadImage(url, savePath) {
-    const file = fs.createWriteStream(savePath);
+    return new Promise((resolve, reject) => {
+        const file = fs.createWriteStream(savePath);
 
-    https.get(url, (response) => {
-        if (response.statusCode === 200) {
-            response.pipe(file);
-            file.on('finish', () => {
-                file.close();
-                console.log(`图片已成功下载到 ${savePath}`);
-            }).on('error', (err) => {
-                fs.unlink(savePath, () => {});
-                console.error(`写入文件时出错: ${err.message}`);
-            });
-        } else {
-            console.error(`请求失败，状态码: ${response.statusCode}`);
-        }
-    }).on('error', (err) => {
-        console.error(`下载图片时出错: ${err.message}`);
+        https.get(url, (response) => {
+            if (response.statusCode === 200) {
+                response.pipe(file);
+                file.on('finish', () => {
+                    file.close();
+                    console.log(`图片已成功下载到 ${savePath}`);
+                    resolve();
+                }).on('error', (err) => {
+                    fs.unlink(savePath, () => {});
+                    console.error(`写入文件时出错: ${err.message}`);
+                    reject(err);
+                });
+            } else {
+                console.error(`请求失败，状态码: ${response.statusCode}`);
+                reject(new Error(`请求失败，状态码: ${response.statusCode}`));
+            }
+        }).on('error', (err) => {
+            console.error(`下载图片时出错: ${err.message}`);
+            reject(err);
+        });
     });
 }
 
@@ -84,7 +90,7 @@ app.get('/api', async (req, res) => {
             if (exists) {
                 save_path_output = "http://150.158.25.36:8888/".concat(save_path_output)
             } else {
-                downloadImage(pic_set, save_path);
+                await downloadImage(pic_set, save_path);
                 save_path_output = "http://150.158.25.36:8888/".concat(save_path_output)
             }
         }

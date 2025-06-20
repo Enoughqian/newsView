@@ -49,7 +49,7 @@ app.use(express.static(__dirname));
 
 app.get('/api', async (req, res) => {
     const id = req.query.id;
-    const url = `http://152.32.218.226:9999/news_server/api/getShowNews?id=${id}`;
+    const url = `http://127.0.0.1:9999/news_server/api/getShowNews?id=${id}`;
     try {
         // 动态导入 node-fetch
         const { default: fetch } = await import('node-fetch');

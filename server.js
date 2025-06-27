@@ -67,7 +67,12 @@ app.get('/api', async (req, res) => {
         const data = await response.json();
 
         const title = data.title;
-        const pic_set = data.pic_set;
+        if (data.pic_set.includes("download-word")){
+            var pic_set = data.pic_set;
+        }else{
+            var pic_set = "";
+        }
+        
         const content = data.content;
         const href = data.href;
 
@@ -84,7 +89,6 @@ app.get('/api', async (req, res) => {
             save_path = null;
         }
 
-        
         if (save_path){
             const exists = fs.existsSync(save_path);
             if (exists) {
@@ -95,7 +99,7 @@ app.get('/api', async (req, res) => {
             }
         }
 
-        console.log({ title, save_path_output, content, href });
+        console.log({content, title, save_path_output, href });
         res.json({ title, save_path_output, content, href });
         
     } catch (error) {
